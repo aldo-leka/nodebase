@@ -15,7 +15,7 @@ export const workflowsRouter = createTRPCRouter({
     }),
     remove: protectedProcedure
         .input(z.object({ id: z.string() }))
-        .mutation(( { ctx, input }) => {
+        .mutation(({ ctx, input }) => {
             return prisma.workflow.delete({
                 where: {
                     id: input.id,
@@ -34,7 +34,7 @@ export const workflowsRouter = createTRPCRouter({
     getOne: protectedProcedure
         .input(z.object({ id: z.string() }))
         .query(({ ctx, input }) => {
-            return prisma.workflow.findUnique({
+            return prisma.workflow.findUniqueOrThrow({
                 where: { id: input.id, userId: ctx.auth.user.id }
             });
         }),
@@ -57,7 +57,7 @@ export const workflowsRouter = createTRPCRouter({
                 prisma.workflow.findMany({
                     skip: (page - 1) * pageSize,
                     take: pageSize,
-                    where: { 
+                    where: {
                         userId: ctx.auth.user.id,
                         name: {
                             contains: search,
