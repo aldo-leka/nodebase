@@ -6,6 +6,7 @@ import { createTRPCRouter, premiumProcedure, protectedProcedure } from "@/trpc/i
 import { generateSlug } from "random-word-slugs";
 import z from "zod";
 import { inngest } from "@/inngest/client";
+import { sendWorkflowExecution } from "@/inngest/utils";
 
 export const workflowsRouter = createTRPCRouter({
     execute: protectedProcedure
@@ -18,9 +19,8 @@ export const workflowsRouter = createTRPCRouter({
                 },
             });
 
-            await inngest.send({
-                name: "workflows/execute.workflow",
-                data: { workflowId: input.id },
+            await sendWorkflowExecution({
+                workflowId: input.id,
             });
 
             return workflow;
