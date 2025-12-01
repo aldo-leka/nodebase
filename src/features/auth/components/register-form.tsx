@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { email, z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -31,10 +31,10 @@ const registerSchema = z.object({
     password: z.string().min(1, "Password is required"),
     confirmPassword: z.string(),
 })
-.refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"]
-});
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords don't match",
+        path: ["confirmPassword"]
+    });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -49,6 +49,32 @@ export function RegisterForm() {
             confirmPassword: "",
         },
     });
+
+    const signInGithub = async () => {
+        await authClient.signIn.social({
+            provider: "github",
+        }, {
+            onSuccess: () => {
+                router.push("/");
+            },
+            onError: () => {
+                toast.error("Something went wrong");
+            }
+        });
+    }
+
+    const signInGoogle = async () => {
+        await authClient.signIn.social({
+            provider: "google",
+        }, {
+            onSuccess: () => {
+                router.push("/");
+            },
+            onError: () => {
+                toast.error("Something went wrong");
+            }
+        });
+    }
 
     const onSubmit = async (values: RegisterFormValues) => {
         await authClient.signUp.email(
@@ -88,30 +114,32 @@ export function RegisterForm() {
                             <div className="grid gap-6">
                                 <div className="flex flex-col gap-4">
                                     <Button
+                                        onClick={signInGithub}
                                         variant="outline"
                                         className="w-full"
                                         type="button"
                                         disabled={isPending}>
-                                            <Image
-                                                alt="GitHub" 
-                                                src="/logos/github.svg"
-                                                width={20}
-                                                height={20}
-                                            />
-                                            Continue with GitHub
+                                        <Image
+                                            alt="GitHub"
+                                            src="/logos/github.svg"
+                                            width={20}
+                                            height={20}
+                                        />
+                                        Continue with GitHub
                                     </Button>
                                     <Button
+                                        onClick={signInGoogle}
                                         variant="outline"
                                         className="w-full"
                                         type="button"
                                         disabled={isPending}>
-                                            <Image
-                                                alt="Google" 
-                                                src="/logos/google.svg"
-                                                width={20}
-                                                height={20}
-                                            />
-                                            Continue with Google
+                                        <Image
+                                            alt="Google"
+                                            src="/logos/google.svg"
+                                            width={20}
+                                            height={20}
+                                        />
+                                        Continue with Google
                                     </Button>
                                     <div className="grid gap-6">
                                         <FormField
@@ -121,7 +149,7 @@ export function RegisterForm() {
                                                 <FormItem>
                                                     <FormLabel>Email</FormLabel>
                                                     <FormControl>
-                                                        <Input 
+                                                        <Input
                                                             type="email"
                                                             placeholder="m@example.com"
                                                             {...field}
@@ -138,7 +166,7 @@ export function RegisterForm() {
                                                 <FormItem>
                                                     <FormLabel>Password</FormLabel>
                                                     <FormControl>
-                                                        <Input 
+                                                        <Input
                                                             type="password"
                                                             placeholder="********"
                                                             {...field}
@@ -155,7 +183,7 @@ export function RegisterForm() {
                                                 <FormItem>
                                                     <FormLabel>Confirm Password</FormLabel>
                                                     <FormControl>
-                                                        <Input 
+                                                        <Input
                                                             type="password"
                                                             placeholder="********"
                                                             {...field}
@@ -165,11 +193,11 @@ export function RegisterForm() {
                                                 </FormItem>
                                             )}
                                         />
-                                        <Button 
+                                        <Button
                                             type="submit"
                                             className="w-full"
                                             disabled={isPending}
-                                            >
+                                        >
                                             Sign up
                                         </Button>
                                     </div>
@@ -179,7 +207,7 @@ export function RegisterForm() {
                                             href="/login"
                                             className="underline underline-offset-4"
                                         >
-                                        Login
+                                            Login
                                         </Link>
                                     </div>
                                 </div>
